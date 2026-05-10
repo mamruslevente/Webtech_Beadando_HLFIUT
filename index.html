@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Autók listája</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="nav-bar">
+            <a href="index.html" class="btn btn-secondary">Főoldal</a>
+            <a href="form.html" class="btn btn-primary">Új autó hozzáadása</a>
+        </div>
+        <h1>Autók listája</h1>
+        <div id="car-list" class="car-list"></div>
+    </div>
+    <script src="api.js"></script>
+    <script>
+        async function renderCars() {
+            const cars = await getCars();
+            const container = document.getElementById('car-list');
+
+            cars.forEach(car => {
+                const card = document.createElement('div');
+                card.className = 'car-card';
+                card.innerHTML = `
+                    <h3>${car.brand} ${car.model}</h3>
+                    <a href="car.html?id=${car.id}">Adatlap megtekintése</a>
+                `;
+                container.appendChild(card);
+            });
+        }
+        renderCars();
+    </script>
+</body>
+
+</html>

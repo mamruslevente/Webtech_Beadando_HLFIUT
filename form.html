@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Autó űrlap</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="nav-bar">
+            <a href="index.html" class="btn btn-secondary">Vissza a listához</a>
+        </div>
+        <h1 id="form-title">Új autó rögzítése</h1>
+
+        <div class="form-group">
+            <label for="brand">Márka:</label>
+            <input type="text" id="brand">
+        </div>
+        <div class="form-group">
+            <label for="model">Modell:</label>
+            <input type="text" id="model">
+        </div>
+        <div class="form-group">
+            <label for="fuelUse">Fogyasztás (l/100km):</label>
+            <input type="number" id="fuelUse" step="0.1">
+        </div>
+        <div class="form-group">
+            <label for="owner">Tulajdonos:</label>
+            <input type="text" id="owner">
+        </div>
+        <div class="form-group">
+            <label for="dayOfCommission">Forgalomba helyezés napja:</label>
+            <input type="date" id="dayOfCommission">
+        </div>
+        <div class="form-group">
+            <label for="electric" style="display:inline-block; margin-right:10px;">Elektromos jármű:</label>
+            <input type="checkbox" id="electric" style="width:auto;">
+        </div>
+        <button id="save-btn" class="btn btn-primary">Mentés</button>
+    </div>
+
+    <script src="api.js"></script>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get('id');
+
+        if (id) {
+            document.getElementById('form-title').textContent = 'Autó módosítása';
+            loadCarData();
+        }
+
+        async function loadCarData() {
+            const car = await getCar(id);
+            document.getElementById('brand').value = car.brand;
+            document.getElementById('model').value = car.model;
+            document.getElementById('fuelUse').value = car.fuelUse;
+            document.getElementById('owner').value = car.owner;
+            document.getElementById('dayOfCommission').value = car.dayOfCommission;
+            document.getElementById('electric').checked = car.electric;
+        }
+
+        document.getElementById('save-btn').addEventListener('click', async () => {
+            const carData = {
+                brand: document.getElementById('brand').value,
+                model: document.getElementById('model').value,
+                fuelUse: parseFloat(document.getElementById('fuelUse').value) || 0,
+                owner: document.getElementById('owner').value,
+                dayOfCommission: document.getElementById('dayOfCommission').value,
+                electric: document.getElementById('electric').checked
+            };
+
+            if (id) {
+                await updateCar(id, carData);
+                window.location.href = `car.html?id=${id}`;
+            } else {
+                await createCar(carData);
+                window.location.href = 'index.html';
+            }
+        });
+    </script>
+</body>
+
+</html>

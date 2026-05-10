@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Autó adatlap</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="nav-bar">
+            <a href="index.html" class="btn btn-secondary">Vissza a listához</a>
+        </div>
+        <h1 id="car-title">Betöltés...</h1>
+        <div id="car-details"></div>
+        <div style="margin-top: 20px;">
+            <button id="edit-btn" class="btn btn-secondary">Módosítás</button>
+            <button id="delete-btn" class="btn btn-danger">Törlés</button>
+        </div>
+    </div>
+    <script src="api.js"></script>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get('id');
+
+        async function renderCar() {
+            const car = await getCar(id);
+            document.getElementById('car-title').textContent = `${car.brand} ${car.model}`;
+            document.getElementById('car-details').innerHTML = `
+                <p><strong>Márka:</strong> ${car.brand}</p>
+                <p><strong>Modell:</strong> ${car.model}</p>
+                <p><strong>Tulajdonos:</strong> ${car.owner}</p>
+                <p><strong>Forgalomba helyezve:</strong> ${car.dayOfCommission}</p>
+                <p><strong>Fogyasztás:</strong> ${car.fuelUse} liter/100km</p>
+                <p><strong>Elektromos:</strong> ${car.electric ? 'Igen' : 'Nem'}</p>
+            `;
+
+            document.getElementById('edit-btn').addEventListener('click', () => {
+                window.location.href = `form.html?id=${id}`;
+            });
+
+            document.getElementById('delete-btn').addEventListener('click', async () => {
+                await deleteCar(id);
+                window.location.href = 'index.html';
+            });
+        }
+        renderCar();
+    </script>
+</body>
+
+</html>
